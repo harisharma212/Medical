@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+{% load static %}
+
+{% include 'head.html' %}
+
+<html>
+	<body>
+		<!-- Wrapper -->
+			<div id="wrapper">
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+							{% include 'header.html' %}
+							<br><br>
+							<font color="red" face="Verdana"><marquee><h3>Place the Excel file in /home/usr/Desktop/
+                                and click the LOAD button</h3></marquee></font>
+							<!-- Banner -->
+							<form action="/load_excel/" method="POST">
+								{% csrf_token %}
+								<input type="submit" value="LOAD DATA">
+							</form>
+
+						</div>
+					</div>
+				<!-- Sidebar -->
+					{% include 'sidebar.html' %}
+			</div>
+		<!-- Scripts -->
+			{% include 'js_scripts.html' %}
+	</body>
+</html>

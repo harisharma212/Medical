@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+{% load static %}
+
+{% include 'head.html' %}
+
+<html>
+  <body>
+    <!-- Wrapper -->
+      <div id="wrapper">
+        <!-- Main -->
+          <div id="main">
+            <div class="inner">
+              {% include 'header.html' %}
+              <!-- Banner -->
+                <h3 align="center"> Please click on Do Billing to Proceed </h3>
+
+                <form action='/go_final_billing/' method='POST'>
+                    {% csrf_token %}
+                    <table>
+                      <tr>
+                        <th>Select the User</th>
+                        <td>
+                            <select name='bill_user'>
+                            <option value="">Select User</option>
+                            {% for usr in users %}
+                              <option value = {{usr.user}}> {{usr.user}} </option>
+                            {% endfor %}
+                          </select>
+                        </td>
+                      </tr>
+                    </table>
+                    <table border=1 align='center'>
+                      <tr>
+                        <th>Batch Number</th>
+                        <th>Item Name</th>
+                        <th>Company</th>
+                        <th>Price Per Item</th>
+                        <th>Number of Items Requested</th>
+                        <th>Number of Items Available</th>
+                        <th>Total price</th>
+                      </tr>
+
+                      {% for dict in test_list %}
+                        <tr>
+                          <td><input type='text' value='{{dict.obj.batch_num}}' name='batch_nums' readonly></td>
+                          <td><input type='text' value='{{dict.obj.item_name}}' name='item_nums' readonly></td>
+                          <td><input type='text' value='{{dict.obj.company}}' name='company_names' readonly></td>
+                          <td><input type='text' value='{{dict.total_ppu}}' name='ppus' readonly></td>
+                          <td><input type='text' value='{{dict.quantity}}' name='quantities' readonly></td>
+                          <td><input type='text' value='{{dict.obj.quantity}}' name='quantities_avl' readonly></td>
+                          <td><input type='text' value='{{dict.tp}}' name='tps' readonly></td>
+                        </tr>
+                      {% endfor %}
+                      <tr>
+                        <td colspan=6 align='center'> Total Price </td>
+                        <td><input type='text' value='{{sum}}' name='sum'></td>
+                      </tr> 
+                      <tr> <td colspan=7></td></tr>
+                      <tr> <td colspan=7 align='center'><input type='submit' value='Do billing'></td></tr>
+                    </table>
+                    <br><br><br>
+                    <h4 align='center' color='black'>
+                      ***************  If you want to change the number of items required, then change here itself  ***************
+                    </h4>
+                  </form>
+            </div>
+          </div>
+        <!-- Sidebar -->
+          {% include 'sidebar.html' %}
+      </div>
+    <!-- Scripts -->
+      {% include 'js_scripts.html' %}
+  </body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+{% load static %}
+
+{% include 'head.html' %}
+
+<html>
+	<body>
+		<!-- Wrapper -->
+			<div id="wrapper">
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+							{% include 'header.html' %}
+							<!-- Banner -->
+							<br>
+							<h2 align="center"> Welcome to billing/shopping page</h2>
+							<font color="red">
+								<marquee>Before loading Billing page, please enter the number of product for billing....</marquee>
+							</font>
+							<br><br>
+							<form action="/load_shop_page/" method="POST">
+							{% csrf_token %}
+								<table cellspacing="10" cellpadding="10">
+									<tr>
+										<th>Enter Number of Products</th>
+										<!--<td align="center"><input type="text" name="no_of_products"></td>-->
+										<td align="center">
+											<select name="no_of_products">
+												<option selected="selected">1</option>
+												{% for ele in count %}
+													<option>{{ele}}</option>
+												{% endfor %}
+											</select>
+										</td>
+										<td><input type="submit" name="Proceed"></td>
+									</tr>
+								</table>
+							</form>
+							
+						</div>
+					</div>
+				<!-- Sidebar -->
+					{% include 'sidebar.html' %}
+			</div>
+		<!-- Scripts -->
+			{% include 'js_scripts.html' %}
+	</body>
+</html>

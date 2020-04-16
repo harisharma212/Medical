@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+{% load static %}
+
+{% include 'head.html' %}
+
+<html>
+	<body>
+		<!-- Wrapper -->
+			<div id="wrapper">
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+							{% include 'header.html' %}
+							<!-- Banner -->
+							<h2 align="center"> Welcome to billing/shopping page</h2>
+							<form action="/show_billing_cart/" method="POST">
+								{% csrf_token %}
+								<table border="1" cellpadding="10" cellspacing="10" align="center">
+									<tr>
+										<th align="center">Product Name</th>
+										<th align="center">Required Quantity</th>
+									</tr>
+									{% for ele in looping %}
+										<tr align="center">
+											<td align="center">
+									            <select name='item_name_s'>
+									            	<option value="">Select Item</option>
+									            	{% for obj in objs %}
+											            <option value = {{obj.batch_num}}> {{obj.item_name}} </option>
+										            {% endfor %}
+										        </select>
+								            </td>
+								            <td  align="center"><input type="text" name="req_qnt"></td>
+								        </tr>
+									{% endfor %}
+									<tr>
+										<td colspan="3" align="center"><input type="submit" value="Proceed"></td>
+									</tr>
+								</table>
+							</form>
+							</font>	
+						</div>
+					</div>
+				<!-- Sidebar -->
+					{% include 'sidebar.html' %}
+			</div>
+		<!-- Scripts -->
+			{% include 'js_scripts.html' %}
+	</body>
+</html>

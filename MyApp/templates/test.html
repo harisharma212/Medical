@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+{% load static %}
+
+{% include 'head.html' %}
+
+<html>
+	<body>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+
+							{% include 'header.html' %}
+							<br><br>
+							<!-- Banner -->
+							<table align="center">
+								<tr><th>XX</th><th>XXX</th><th>XX</th><th>XXX</th></tr>
+								{% for ele in "123456"|make_list %}
+									<tr><td>XX</td><td>XXX</td><td>XX</td><td>XXX</td></tr>
+								{% endfor %}
+							</table>
+
+							
+								<!--{% include 'content.html' %}-->
+
+						</div>
+					</div>
+
+				<!-- Sidebar -->
+					{% include 'sidebar.html' %}
+
+			</div>
+
+		<!-- Scripts -->
+			{% include 'js_scripts.html' %}
+
+	</body>
+</html>

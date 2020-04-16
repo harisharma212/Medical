@@ -1,0 +1,68 @@
+
+<!DOCTYPE HTML>
+{% load static %}
+
+{% include 'head.html' %}
+
+<html>
+	<body>
+		<!-- Wrapper -->
+			<div id="wrapper">
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+							{% include 'header.html' %}
+							<!-- Banner -->
+								  <h3 align="center"> Billing Details </h3>
+								  <table border=1 align='center' cellpadding=10>
+										<tr>
+											<th>Batch Number</th>
+											<th>Item Name</th>
+											<th>Company</th>
+											<th>Price Per Item</th>
+											<th>Number of Items Requested</th>
+											<th>Total price</th>
+										</tr>
+
+										{% for i in final_list %}
+											<tr>
+												<td align='center'>{{i.batch_num}}</td>
+												<td align='center'>{{i.item_name}}</td>
+												<td align='center'>{{i.company}}</td>
+												<td align='center'>{{i.ppu}}</td>
+												<td align='center'>{{i.quantity}}</td>
+												<td align='center'>{{i.tp}}</td>
+											</tr>
+										{% endfor %}
+										<tr>
+											<td colspan=5 align='center'> Total Sum </td>
+											<td align='center'>{{sum.0}}</td>
+										</tr> 
+								</table>
+								<br><br><br><br><br><br><br><br>
+								<font color='blue'><h3 align='center'> Dealers Signature &nbsp;&nbsp;
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Approver Signature</h3></font>
+								<table>
+									<tr>
+										<td><form action="/send_invoice/" method="POST">
+										{% csrf_token %}
+										<input type="hidden" name="email_id" value={{user_details.email_id}}>
+										<font align='center'><input type='submit' value='Send Invoice'></font>	
+										</form></td>
+										<td>
+											<a href='/print_page/'><input type='button' value='Print Page'></a>
+										</td>	
+									</tr>
+								</table>
+						</div>
+					</div>
+				<!-- Sidebar -->
+					{% include 'sidebar.html' %}
+			</div>
+		<!-- Scripts -->
+			{% include 'js_scripts.html' %}
+	</body>
+</html>
+
+
+  

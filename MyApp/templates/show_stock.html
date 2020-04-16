@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+{% load static %}
+
+{% include 'head.html' %}
+
+<html>
+  <body>
+    <!-- Wrapper -->
+      <div id="wrapper">
+        <!-- Main -->
+          <div id="main">
+            <div class="inner">
+              {% include 'header.html' %}
+              <!-- Banner -->
+            <br>
+            <h2 align="center"> Stock Details </h2>
+              <form action="/show_selected_stock/" method="GET">
+                <table align="center" cellspacing="10">
+                  <tr>
+                    <th>Search by Item Name</th>
+                    <td>
+                      <select name="itemname">
+                        <option selected="selected">Select Item Name</option>
+                        {% for name in itemnames %}
+                          <option>{{name}}</option>
+                        {% endfor %}
+                      </select>
+                    </td>
+                    <td>
+                      <input type='submit' value='Search'>
+                    </td>
+                  </tr>
+                </table>
+              </form>
+              <table align="center" border="1">
+                <tr>
+                  <th>Batch Number</th>
+                  <th>Item Name</th>
+                  <th>Company Name</th>
+                  <th>Price</th>
+                  <th>Manufacture Date</th>
+                  <th>Expiry Date</th>
+                  <th>Quantity</th>
+                  <th>Dealer Name</th>
+                  <th>Comments</th>
+                </tr>
+                {% for obj in data %}
+                  <tr>
+                  <th>{{obj.batch_num}}</th>
+                  <th>{{obj.item_name}}</th>
+                  <th>{{obj.company}}</th>
+                  <th>{{obj.price}}</th>
+                  <th>{{obj.manf_date}}</th>
+                  <th>{{obj.exp_date}}</th>
+                  <th>{{obj.quantity}}</th>
+                  <th>{{obj.dealer.person_info.first_name}}</th>
+                  <th>{{obj.comments}}</th>
+                </tr>
+                {% endfor %}
+              </table>
+            </div>
+          </div>
+        <!-- Sidebar -->
+          {% include 'sidebar.html' %}
+      </div>
+    <!-- Scripts -->
+      {% include 'js_scripts.html' %}
+  </body>
+</html>

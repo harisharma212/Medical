@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+{% load static %}
+
+{% include 'head.html' %}
+
+<html>
+	<body>
+		<!-- Wrapper -->
+			<div id="wrapper">
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+							{% include 'header.html' %}
+							<!-- Banner -->
+								<br><br>
+								<h2 align="center">Profit Details</h2>
+								<form action="/get_profit_details_by_date/" method="GET">
+									<table>
+										<tr>
+											<th>Search Profit Details by Date</th>
+											<td><b>Start Date</b> <input type="date" name="start" min="2017-02-02"\></td>
+											<td><b>End Date</b> <input type="date" name="end"></td>
+											<td><input type="submit" value="Get Bills"></td>
+										</tr>
+									</table>
+								</form>
+								<h3 align="center" color='red'>OR</h3>
+								<form action="/get_profit_details_by_user/" method="GET">
+									<table align="center">
+										<tr>
+											<th>Search Profit Details by User</th>
+											<td>
+												<select name="customer">
+													{% for usr in users %}
+													<option>
+														<option value = {{usr.user}}> {{usr.user}} </option>
+													</option>
+													{% endfor %}
+												</select>
+											</td>
+											<td><input type="submit" value="Get Bills"></td>
+										</tr>
+									</table>
+									
+								</form>
+								
+								<table>
+									<tr>
+										<th>Invoice Number</th>
+										<th>Invoice Date</th>
+										<th>Customer</th>
+										<th>Total Invoice Amount</th>
+										<th>Actual Amount</th>
+										<th>Profit</th>
+									</tr>
+									{% for dt in data %}
+									<tr>
+										<td>{{dt.bill_num}}</td>
+										<td>{{dt.bill_date}}</td>
+										<td>{{dt.user}}</td>
+										<td>{{dt.bill_amount}}</td>
+										<td>{{dt.actual_amount}}</td>
+										<td>{{dt.profit}}</td>
+									</tr>
+									{% endfor %}
+									<tr><th colspan="5" align="center">Total Profit</th><th align="right">{{total_profit}}</th></tr>
+								</table>
+						</div>
+					</div>
+				<!-- Sidebar -->
+					{% include 'sidebar.html' %}
+			</div>
+		<!-- Scripts -->
+			{% include 'js_scripts.html' %}
+	</body>
+</html>
+<!--
+[{'actual_amount': 134.0, 'profit': 46.900000000000006, 'bill_num': 19, 'bill_amount': Decimal('180.9000'), 'user': u'Chandrakala'}, {'actual_amount': 58.03, 'profit': 25.579499999999996, 'bill_num': 20, 'bill_amount': Decimal('83.6095'), 'user': u'Chandrakala'}, {'actual_amount': 62.93, 'profit': 16.884300000000003, 'bill_num': 21, 'bill_amount': Decimal('79.8143'), 'user': u'Chandrakala'}, {'actual_amount': 402.0, 'profit': 140.70000000000005, 'bill_num': 22, 'bill_amount': Decimal('542.7000'), 'user': u'Murthy'}, {'actual_amount': 63.82, 'profit': 17.0178, 'bill_num': 23, 'bill_amount': Decimal('80.8378'), 'user': u'Sharma'}, {'actual_amount': 125.86, 'profit': 33.768600000000006, 'bill_num': 24, 'bill_amount': Decimal('159.6286'), 'user': u'Sharma'}, {'actual_amount': 196.04, 'profit': 63.65080000000003, 'bill_num': 25, 'bill_amount': Decimal('259.6908'), 'user': u'Sharma'}]-->

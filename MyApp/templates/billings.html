@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+{% load static %}
+
+{% include 'head.html' %}
+
+<html>
+	<body>
+		<!-- Wrapper -->
+			<div id="wrapper">
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+							{% include 'header.html' %}
+							<!-- Banner -->
+								<br><br>
+								<h2 align="center">Previous Billings</h2>
+								<form action="/get_bills_by_date/" method="GET">
+									<table>
+										<tr>
+											<th>Search Bills by Date</th>
+											<td><b>Start Date</b> <input type="date" name="start" min="2017-02-02"\></td>
+											<td><b>End Date</b> <input type="date" name="end"></td>
+											<td><input type="submit" value="Get Bills"></td>
+										</tr>
+									</table>
+								</form>
+								<h3 align="center" color='red'>OR</h3>
+								<form action="/get_bills_by_user/" method="GET">
+									<table align="center">
+										<tr>
+											<th>Search Bills by User</th>
+											<td>
+												<select name="customer">
+													{% for usr in users %}
+													<option>
+														<option value = {{usr.user}}> {{usr.user}} </option>
+													</option>
+													{% endfor %}
+												</select>
+											</td>
+											<td><input type="submit" value="Get Bills"></td>
+										</tr>
+									</table>
+									
+								</form>
+								
+								<table>
+									<tr>
+										<th>Invoice Number</th>
+										<th>Invoice Date</th>
+										<th>Customer</th>
+										<th>Invoice Amount</th>
+										<th>Action</th>
+									</tr>
+									{% for bill in billings %}
+									<tr>
+										<th>{{bill.bill_number}}</th>
+										<th>{{bill.bill_date}}</th>
+										<th>{{bill.bill_user.user}}</th>
+										<th>{{bill.bill_amount}}</th>
+										<th><a href="/generate_bill/{{bill.bill_number}}">Get Report</a></th>
+									</tr>
+									{% endfor %}
+								</table>
+						</div>
+					</div>
+				<!-- Sidebar -->
+					{% include 'sidebar.html' %}
+			</div>
+		<!-- Scripts -->
+			{% include 'js_scripts.html' %}
+	</body>
+</html>

@@ -1,0 +1,28 @@
+Python Version - 3.7.5
+Django Version - 3, 0, 5
+
+
+SETUP:(virtualEnv)
+----->
+1. virtualenv --python=/usr/bin/python3 <VirtualEnv Name>
+2. source VE/bin/activate
+3. sudo pip install django
+4. sudo apt-get install libpq-dev postgresql postgresql-contrib
+5. pip install jsonfield
+6. django-admin startproject Medical
+7. cd Medical/
+8. python manage.py startapp MyApp
+
+
+TO CREATE A DATABASE:
+-------------------->
+sudo su - postgres
+psql
+CREATE DATABASE myproject;
+CREATE USER myprojectuser WITH PASSWORD 'password';
+
+ALTER ROLE myprojectuser SET client_encoding TO 'utf8';
+ALTER ROLE myprojectuser SET default_transaction_isolation TO 'read committed';
+ALTER ROLE myprojectuser SET timezone TO 'UTC';
+
+GRANT ALL PRIVILEGES ON DATABASE myproject TO myprojectuser;

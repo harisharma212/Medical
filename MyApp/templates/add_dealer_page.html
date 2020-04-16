@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+{% load static %}
+
+{% include 'head.html' %}
+
+<html>
+	<body>
+		<!-- Wrapper -->
+			<div id="wrapper">
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+							{% include 'header.html' %}
+							<br><br>
+							<font color="red" face="Verdana"><marquee><h3>Date Format Should be like "MM/DD/YYYY"</h3></marquee></font>
+							<!-- Banner -->
+							<form action="/add_dealer/" method="POST">
+								{% csrf_token %}
+								{{ form.as_table }}<br>
+								<input type="submit" value="Add Dealer">
+							</form>
+							
+										
+						</div>
+					</div>
+				<!-- Sidebar -->
+					{% include 'sidebar.html' %}
+			</div>
+		<!-- Scripts -->
+			{% include 'js_scripts.html' %}
+	</body>
+</html>

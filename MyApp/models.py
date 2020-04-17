@@ -16,8 +16,8 @@ class Person(models.Model):
 	phone = models.CharField(max_length=10, unique=True)
 	address = models.CharField(max_length=200)
 
-	def __unicode__(self):
-		return unicode(self.user)
+	def __str__(self):
+		return str(self.user)
 
 
 class DealersInfo(models.Model):
@@ -27,8 +27,8 @@ class DealersInfo(models.Model):
 	dl2 = models.CharField(max_length=15, unique=True)
 	tin = models.CharField(max_length=15, unique=True)
 
-	def __unicode__(self):
-		return unicode(self.person_info.first_name + self.person_info.last_name)
+	def __str__(self):
+		return str(self.person_info.first_name + self.person_info.last_name)
 
 
 class ComplteStockDetails(models.Model):
@@ -45,8 +45,8 @@ class ComplteStockDetails(models.Model):
     cgst = models.CharField(max_length=20)
     sgst = models.CharField(max_length=20)
 
-    def __unicode__(self):
-        return unicode(self.item_name)
+    def __str__(self):
+        return str(self.item_name)
 
 class Billings(models.Model):
 	bill_number = models.AutoField(primary_key=True)
@@ -55,5 +55,5 @@ class Billings(models.Model):
 	bill_user = models.ForeignKey(Person, on_delete=models.CASCADE)
 	bill_amount = models.DecimalField(max_digits=10, decimal_places=4)
 
-	def __unicode__(self):
+	def __str__(self):
 		return str(self.bill_number)

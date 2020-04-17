@@ -133,3 +133,5 @@ STATIC_URL = '/static/'
 # Additional locations of static files
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'MyApp', 'static'), )
+
+LOGIN_URL="/load/"

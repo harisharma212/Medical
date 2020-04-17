@@ -8,12 +8,14 @@ from email.mime.text import MIMEText
 
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
-from MyApp.models import ComplteStockDetails, DealersInfo, Person, Billings
 from django.views.generic import View
 from django.contrib.auth import authenticate, login, logout
 from django.template import RequestContext
+from django.contrib.auth.mixins import LoginRequiredMixin
 from Medical.settings import BASE_DIR
 from MyApp.forms import StockForm, PersonForm, DealerForm
+from MyApp.models import ComplteStockDetails, DealersInfo, Person, Billings
+
 
 
 class LoadView(View):
@@ -47,220 +49,177 @@ class LoginView(View):
             return HttpResponseRedirect('/load/')
 
 
-class HomePageView(View):
+class HomePageView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         try:
-            if request.user.is_authenticated:
-                return render(request, 'home.html', {'user': str(
-                    request.user)})
-            else:
-                return HttpResponseRedirect('/load/')
+            return render(request, 'home.html', {'user': str(
+            	request.user)})
         except:
             return HttpResponseRedirect('/load/')
 
 
-class ContactView(View):
+class ContactView(LoginRequiredMixin, View):
     
     def get(self, request, *args, **kwargs):
-        import pdb;pdb.set_trace()
         try:
-            if request.user.is_authenticated:
-                return render(request, 'contact.html')
-            else:
-                return HttpResponseRedirect('/load/')
+            return render(request, 'contact.html')
         except:
             return HttpResponseRedirect('/load/')
 
     def post(self, request, *args, **kwargs):
-        import pdb;pdb.set_trace()
-        if request.user.is_authenticated:
-            data = request.POST
-            msg = MIMEMultipart()
-            msg['From'] = "Pavana Medicals"
-            msg['To'] = 'talktoharihara@gmail.com'
-            msg['Subject'] = "Comment :: " + str(
-                data.get('name')) + " Mobile - " + data.get(
-                'mobile') + " Mail - " + data.get('mail')
-            message = data.get('comment')
-            msg.attach(MIMEText(message))
-            mailserver = smtplib.SMTP('smtp.gmail.com', 587)
-            mailserver.ehlo()
-            mailserver.starttls()
-            mailserver.ehlo()
-            mailserver.login('talktoharihara@gmail.com', 'GhsKanna212$')
+        data = request.POST
+        msg = MIMEMultipart()
+        msg['From'] = "Pavana Medicals"
+        msg['To'] = 'talktoharihara@gmail.com'
+        msg['Subject'] = "Comment :: " + str(
+            data.get('name')) + " Mobile - " + data.get(
+            'mobile') + " Mail - " + data.get('mail')
+        message = data.get('comment')
+        msg.attach(MIMEText(message))
+        mailserver = smtplib.SMTP('smtp.gmail.com', 587)
+        mailserver.ehlo()
+        mailserver.starttls()
+        mailserver.ehlo()
+        mailserver.login('talktoharihara@gmail.com', 'GhsKanna212$')
 
-            mailserver.sendmail('talktoharihara@gmail.com',
-                                'talktoharihara@gmail.com', msg.as_string())
+        mailserver.sendmail('talktoharihara@gmail.com',
+                            'talktoharihara@gmail.com', msg.as_string())
 
-            mailserver.close()
-            return HttpResponseRedirect('/home/')
-        else:
-            return HttpResponseRedirect('/load/')
+        mailserver.close()
+        return HttpResponseRedirect('/home/')
 
 
-class LogoutView(View):
+class LogoutView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            logout(request)
-            return HttpResponseRedirect('/load/')
-        else:
-            return HttpResponseRedirect('/load/')
+        logout(request)
 
 
-class StockView(View):
+class StockView(LoginRequiredMixin,View):
 
     def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            model = ComplteStockDetails
-            objs = ComplteStockDetails.objects.all()
-            for obj in objs:
-                obj.price = obj.price_per_unit + (obj.price_per_unit * (
-                    float(obj.margin) + float(obj.cgst) + float(obj.sgst)))
-            return render(request, 'show_stock.html',
-                                      {'data': objs,
-                                       'itemnames': [
-                                           obj.item_name for obj in objs]})
-        else:
-            return HttpResponseRedirect('/load/')
+        
+        model = ComplteStockDetails
+        objs = ComplteStockDetails.objects.all()
+        for obj in objs:
+            obj.price = obj.price_per_unit + (obj.price_per_unit * (
+                float(obj.margin) + float(obj.cgst) + float(obj.sgst)))
+        return render(request, 'show_stock.html',
+                                  {'data': objs,
+                                   'itemnames': [
+                                       obj.item_name for obj in objs]})
 
 
-class LoadShopPage(View):
+class LoadShopPage(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            loop_content = range(
-                int(request.POST.get('no_of_products')))
-            objs = ComplteStockDetails.objects.all()
-            return render(request, 'select_shop_page.html',
-                                      {'objs': objs,
-                                       'looping': loop_content}
-                                       )
-        else:
-            return HttpResponseRedirect('/load/')
+        loop_content = range(
+            int(request.POST.get('no_of_products')))
+        objs = ComplteStockDetails.objects.all()
+        return render(request, 'select_shop_page.html',
+                                  {'objs': objs,
+                                   'looping': loop_content}
+                                   )
 
     def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return render(request, 'shop_page.html', {'count': range(2, 50)})
-        return HttpResponseRedirect('/load/')
+        return render(request, 'shop_page.html', {'count': range(2, 50)})
 
 
-class BacktoHomeView(View):
+class BacktoHomeView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return render(request, 'login_welcome.html',
-                                      {'user': request.user.username})
-        else:
-            return HttpResponseRedirect('/load/')
+        return render(request, 'login_welcome.html',
+            {'user': request.user.username})
 
 
-class SelectedStockSearchView(View):
+class SelectedStockSearchView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            objs = ComplteStockDetails.objects.filter(
-                item_name=str(request.GET.get('itemname')))
-            for obj in objs:
-                obj.price = obj.price_per_unit + (obj.price_per_unit * (
-                    float(obj.margin) + float(obj.cgst) + float(obj.sgst)))
+        objs = ComplteStockDetails.objects.filter(
+            item_name=str(request.GET.get('itemname')))
+        for obj in objs:
+            obj.price = obj.price_per_unit + (obj.price_per_unit * (
+                float(obj.margin) + float(obj.cgst) + float(obj.sgst)))
 
-            return render(
-                request,
-                'show_stock.html',
-                {'data': objs,
-                 'itemnames': [
-                     i.item_name for i in ComplteStockDetails.objects.all()]})
-        else:
-            return HttpResponseRedirect('/load/')
+        return render(
+            request,
+            'show_stock.html',
+            {'data': objs,
+             'itemnames': [
+                 i.item_name for i in ComplteStockDetails.objects.all()]})
 
     def post(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return HttpResponseRedirect('/home/')
-        else:
-            return HttpResponseRedirect('/load/')
+        return HttpResponseRedirect('/home/')
 
 
-class ShowDealerView(View):
+class ShowDealerView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            objs = DealersInfo.objects.all()
-            return render(request, 'dealers.html', {'data': objs})
-        else:
-            return HttpResponseRedirect('/load/')
-
+        objs = DealersInfo.objects.all()
+        return render(request, 'dealers.html', {'data': objs})
+    
     def post(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return HttpResponseRedirect('/home/')
-        else:
-            return HttpResponseRedirect('/load/')
+        return HttpResponseRedirect('/home/')
 
 
-class ShowBillingCart(View):
+class ShowBillingCart(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         users = Person.objects.all()
-        if request.user.is_authenticated:
-            dictionary = dict(request.POST.viewitems())
-            test_list = []
-            for key in range(len(dictionary.get('item_name_s'))):
+        dictionary = dict(request.POST.viewitems())
+        test_list = []
+        for key in range(len(dictionary.get('item_name_s'))):
 
-                if str(dictionary.get(
-                    'item_name_s')[key]) != str('') and int(
-                        dictionary.get('req_qnt')[key]) > 0:
-                    try:
-                        bill_stock_obj = ComplteStockDetails.objects.get(
-                            batch_num=int(dictionary.get('item_name_s')[key]))
-                        if bill_stock_obj and bill_stock_obj.quantity and (
-                            int(bill_stock_obj.quantity) > int(
-                                dictionary.get('req_qnt')[key])):
-                            total_price = (float(
-                                bill_stock_obj.price_per_unit) + (
-                                float(bill_stock_obj.price_per_unit) * (float(
-                                    bill_stock_obj.margin) + float(
-                                    bill_stock_obj.cgst) + float(
-                                    bill_stock_obj.sgst)))) * \
-                                float(
-                                dictionary.get('req_qnt')[key])
-                            total_ppu = (float(bill_stock_obj.price_per_unit) +
-                                         (float(bill_stock_obj.price_per_unit) *
-                                          (float(bill_stock_obj.margin) +
-                                           float(bill_stock_obj.cgst) +
-                                           float(bill_stock_obj.sgst))))
+            if str(dictionary.get(
+                'item_name_s')[key]) != str('') and int(
+                    dictionary.get('req_qnt')[key]) > 0:
+                try:
+                    bill_stock_obj = ComplteStockDetails.objects.get(
+                        batch_num=int(dictionary.get('item_name_s')[key]))
+                    if bill_stock_obj and bill_stock_obj.quantity and (
+                        int(bill_stock_obj.quantity) > int(
+                            dictionary.get('req_qnt')[key])):
+                        total_price = (float(
+                            bill_stock_obj.price_per_unit) + (
+                            float(bill_stock_obj.price_per_unit) * (float(
+                                bill_stock_obj.margin) + float(
+                                bill_stock_obj.cgst) + float(
+                                bill_stock_obj.sgst)))) * \
+                            float(
+                            dictionary.get('req_qnt')[key])
+                        total_ppu = (float(bill_stock_obj.price_per_unit) +
+                                     (float(bill_stock_obj.price_per_unit) *
+                                      (float(bill_stock_obj.margin) +
+                                       float(bill_stock_obj.cgst) +
+                                       float(bill_stock_obj.sgst))))
 
-                            test_list.append({'obj': bill_stock_obj,
-                                              'quantity': dictionary.get(
-                                                  'req_qnt')[key],
-                                              'tp': total_price,
-                                              'total_ppu': total_ppu})
-                    except:
-                        continue
-            else:
-                pass
-            sum_of_all_elements = sum([x['tp'] for x in test_list])
-            return render(request, 'show_final_billing_cart.html', {
-                'test_list': test_list,
-                'sum': sum_of_all_elements, 'users': users},
-                context_instance=RequestContext(
-                request))
+                        test_list.append({'obj': bill_stock_obj,
+                                          'quantity': dictionary.get(
+                                              'req_qnt')[key],
+                                          'tp': total_price,
+                                          'total_ppu': total_ppu})
+                except:
+                    continue
         else:
-            return HttpResponseRedirect('/load/')
-
+            pass
+        sum_of_all_elements = sum([x['tp'] for x in test_list])
+        return render(request, 'show_final_billing_cart.html', {
+            'test_list': test_list,
+            'sum': sum_of_all_elements, 'users': users},
+            context_instance=RequestContext(
+            request))
+    
     def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return HttpResponseRedirect('/load_shop_page/')
-        else:
-            return HttpResponseRedirect('/load/')
+        return HttpResponseRedirect('/load_shop_page/')
 
 
-class GoFinalBillingView(View):
+class GoFinalBillingView(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         final_list = []
         dictionary = dict(request.POST)
-        if request.user.is_authenticated() and dictionary.get('bill_user')[0]:
+        if dictionary.get('bill_user')[0]:
             batch_numbers = dictionary['batch_nums']
             item_names = dictionary['item_nums']
             company_names = dictionary['company_names']
@@ -312,7 +271,7 @@ class GoFinalBillingView(View):
             return HttpResponseRedirect('/load_shop_page/')
 
 
-class SendInvoiceView(View):
+class SendInvoiceView(LoginRequiredMixin, View):
 
     def post(self, request):
         mail = request.POST.get('email_id')
@@ -348,33 +307,27 @@ def print_page(request):
     return HttpResponseRedirect('/home')
 
 
-class ShowBillingsView(View):
+class ShowBillingsView(LoginRequiredMixin, View):
 
     def get(self, request):
         import pdb
         pdb.set_trace()
-        if request.user.is_authenticated:
-            objs = Billings.objects.all().order_by('-bill_date')
-            users = Person.objects.all()
-            return render(request, 'billings.html',
-                          {'billings': objs, 'users': users})
-        else:
-            return HttpResponseRedirect('/load/')
-
+        objs = Billings.objects.all().order_by('-bill_date')
+        users = Person.objects.all()
+        return render(request, 'billings.html',
+                      {'billings': objs, 'users': users})
+    
     def post(self, request):
-        if request.user.is_authenticated:
-            objs = Billings.objects.all()
-            users = Person.objects.all()
-            return render(request, 'billings.html',
-                          {'billings': objs, 'users': users})
-        else:
-            return HttpResponseRedirect('/load/')
+        objs = Billings.objects.all()
+        users = Person.objects.all()
+        return render(request, 'billings.html',
+                      {'billings': objs, 'users': users})
 
 
-class GenerateBillView(View):
+class GenerateBillView(LoginRequiredMixin, View):
 
     def get(self, request, bill_num=None):
-        if request.user.is_authenticated() and bill_num:
+        if bill_num:
             obj = Billings.objects.get(bill_number=int(bill_num))
             inv_number = obj.bill_number
             inv_date = obj.bill_date
@@ -401,44 +354,67 @@ class GenerateBillView(View):
             return HttpResponseRedirect('/load/')
 
 
-class GetBillsByDateView(View):
+class GetBillsByDateView(LoginRequiredMixin, View):
 
     def get(self, request):
-        if request.user.is_authenticated:
-            try:
-                objs = Billings.objects.filter(
-                    bill_date__range=[request.GET['start'],
-                                      request.GET['end']]).order_by(
-                    '-bill_date')
-                users = Person.objects.all()
-                return render(request, 'billings.html',
-                              {'billings': objs, 'users': users})
-            except:
-                return HttpResponseRedirect('/billings/')
-        else:
-            return HttpResponseRedirect('/load/')
+        try:
+            objs = Billings.objects.filter(
+                bill_date__range=[request.GET['start'],
+                                  request.GET['end']]).order_by(
+                '-bill_date')
+            users = Person.objects.all()
+            return render(request, 'billings.html',
+                          {'billings': objs, 'users': users})
+        except:
+            return HttpResponseRedirect('/billings/')
 
 
-class GetBillsByUserView(View):
+class GetBillsByUserView(LoginRequiredMixin, View):
 
     def get(self, request):
-        if request.user.is_authenticated:
-            try:
-                objs = Billings.objects.filter(bill_user__user=str(
-                    request.GET['customer'])).order_by('-bill_date')
-                users = Person.objects.all()
-                return render(request, 'billings.html', {'billings': objs, 'users': users})
-            except:
-                return HttpResponseRedirect('/billings/')
-        else:
-            return HttpResponseRedirect('/load/')
+        try:
+            objs = Billings.objects.filter(bill_user__user=str(
+                request.GET['customer'])).order_by('-bill_date')
+            users = Person.objects.all()
+            return render(request, 'billings.html', {'billings': objs, 'users': users})
+        except:
+            return HttpResponseRedirect('/billings/')
 
 
-class ShowProfitView(View):
+class ShowProfitView(LoginRequiredMixin, View):
 
     def get(self, request):
-        if request.user.is_authenticated:
-            obj_bills = Billings.objects.all()
+        obj_bills = Billings.objects.all()
+        users = Person.objects.all()
+        data_list = []
+        for bill in obj_bills:
+            data = {}
+            data['bill_num'] = bill.bill_number
+            data['bill_amount'] = bill.bill_amount
+            data['bill_date'] = bill.bill_date
+            data['actual_amount'] = float(
+                sum([ComplteStockDetails.objects.get(
+                    batch_num=item['batch_num']).price_per_unit * int(
+                    item['quantity']) for item in bill.bill_items]))
+            data['profit'] = float(
+                data['bill_amount']) - data['actual_amount']
+            data['user'] = str(bill.bill_user.user)
+            data_list.append(data)
+        total_profit = sum([list_['profit']
+                            for list_ in data_list])
+        return render(request, 'profit_bills.html',
+                      {'data': data_list, 'users': users,
+                       'total_profit': total_profit})
+
+
+class ProfitBillsByDateView(LoginRequiredMixin, View):
+
+    def get(self, request):
+        try:
+            obj_bills = Billings.objects.filter(
+                bill_date__range=[request.GET[
+                    'start'], request.GET['end']]).order_by(
+                '-bill_date')
             users = Person.objects.all()
             data_list = []
             for bill in obj_bills:
@@ -459,124 +435,70 @@ class ShowProfitView(View):
             return render(request, 'profit_bills.html',
                           {'data': data_list, 'users': users,
                            'total_profit': total_profit})
-        else:
-            return HttpResponseRedirect('/load/')
+        except:
+            return HttpResponseRedirect('/profit/')
 
 
-class ProfitBillsByDateView(View):
-
-    def get(self, request):
-        if request.user.is_authenticated:
-            try:
-                obj_bills = Billings.objects.filter(
-                    bill_date__range=[request.GET[
-                        'start'], request.GET['end']]).order_by(
-                    '-bill_date')
-                users = Person.objects.all()
-                data_list = []
-                for bill in obj_bills:
-                    data = {}
-                    data['bill_num'] = bill.bill_number
-                    data['bill_amount'] = bill.bill_amount
-                    data['bill_date'] = bill.bill_date
-                    data['actual_amount'] = float(
-                        sum([ComplteStockDetails.objects.get(
-                            batch_num=item['batch_num']).price_per_unit * int(
-                            item['quantity']) for item in bill.bill_items]))
-                    data['profit'] = float(
-                        data['bill_amount']) - data['actual_amount']
-                    data['user'] = str(bill.bill_user.user)
-                    data_list.append(data)
-                total_profit = sum([list_['profit']
-                                    for list_ in data_list])
-                return render(request, 'profit_bills.html',
-                              {'data': data_list, 'users': users,
-                               'total_profit': total_profit})
-            except:
-                return HttpResponseRedirect('/profit/')
-        else:
-            return HttpResponseRedirect('/load/')
-
-
-class ProfitBillsByUserView(View):
+class ProfitBillsByUserView(LoginRequiredMixin, View):
 
     def get(self, request):
-        if request.user.is_authenticated:
-            try:
-                obj_bills = Billings.objects.filter(bill_user__user=str(
-                    request.GET['customer'])).order_by('-bill_date')
-                users = Person.objects.all()
-                data_list = []
-                for bill in obj_bills:
-                    data = {}
-                    data['bill_num'] = bill.bill_number
-                    data['bill_amount'] = bill.bill_amount
-                    data['bill_date'] = bill.bill_date
-                    data['actual_amount'] = float(
-                        sum([ComplteStockDetails.objects.get(
-                            batch_num=item['batch_num']).price_per_unit * int(
-                            item['quantity']) for item in bill.bill_items]))
-                    data['profit'] = float(
-                        data['bill_amount']) - data['actual_amount']
-                    data['user'] = str(bill.bill_user.user)
-                    data_list.append(data)
-                total_profit = sum([list_['profit']
-                                    for list_ in data_list])
-                return render(request, 'profit_bills.html',
-                              {'data': data_list, 'users': users,
-                               'total_profit': total_profit})
-            except:
-                return HttpResponseRedirect('/profit/')
-        else:
-            return HttpResponseRedirect('/load/')
+        try:
+            obj_bills = Billings.objects.filter(bill_user__user=str(
+                request.GET['customer'])).order_by('-bill_date')
+            users = Person.objects.all()
+            data_list = []
+            for bill in obj_bills:
+                data = {}
+                data['bill_num'] = bill.bill_number
+                data['bill_amount'] = bill.bill_amount
+                data['bill_date'] = bill.bill_date
+                data['actual_amount'] = float(
+                    sum([ComplteStockDetails.objects.get(
+                        batch_num=item['batch_num']).price_per_unit * int(
+                        item['quantity']) for item in bill.bill_items]))
+                data['profit'] = float(
+                    data['bill_amount']) - data['actual_amount']
+                data['user'] = str(bill.bill_user.user)
+                data_list.append(data)
+            total_profit = sum([list_['profit']
+                                for list_ in data_list])
+            return render(request, 'profit_bills.html',
+                          {'data': data_list, 'users': users,
+                           'total_profit': total_profit})
+        except:
+            return HttpResponseRedirect('/profit/')
 
 
-class AddPersonPageView(View):
+class AddPersonView(LoginRequiredMixin, View):
 
     def get(self, request):
-        if request.user.is_authenticated:
-            form = PersonForm()
-            return render(request, 'add_dealer_page.html', {'form': form})
-
-
-class AddPersonView(View):
+        form = PersonForm()
+        return render(request, 'add_person.html', {'form': form})
 
     def post(self, request):
-        import pdb
-        # pdb.set_trace()
-        if request.user.is_authenticated:
-            form = PersonForm(request.POST)
-            if form.is_valid():
-                form.save()
-                return HttpResponseRedirect('/home/')
-            else:
-                return HttpResponseRedirect('/add_person_page/')
+        form = PersonForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/home/')
         else:
-            return HttpResponseRedirect('/load/')
+            return HttpResponseRedirect('/add_person/')
 
 
-class AddDealerView(View):
-
+class AddDealerView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
             form = DealerForm()
             return render(request, 'add_dealer_page.html', {'form': form})
-        else:
-            return HttpResponseRedirect('/load/')
 
     def post(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            form = DealerForm(request.POST)
-            if form.is_valid():
-                form.save()
-                return HttpResponseRedirect('/home/')
-            else:
-                return HttpResponseRedirect('/add_dealer_page/')
+        form = DealerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/home/')
         else:
-            return HttpResponseRedirect('/load/')
+            return HttpResponseRedirect('/add_dealer_page/')
 
 
-class LoadAddItem(View):
+class LoadAddItem(LoginRequiredMixin, View):
 
     def get(self, request):
         return render(request, 'additempage.html')
@@ -585,7 +507,7 @@ class LoadAddItem(View):
         return render(request, 'additempage.html')
 
 
-class LoadDataFromExcel(View):
+class LoadDataFromExcel(LoginRequiredMixin, View):
 
     def get(self, request):
         return HttpResponseRedirect('/home/')

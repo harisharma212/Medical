@@ -37,6 +37,7 @@ urlpatterns = [
     url(r'^load_shop_page/', views.LoadShopPage.as_view()),
     url(r'^show_selected_stock/', views.SelectedStockSearchView.as_view()),
     url(r'^back_to_home/', views.BacktoHomeView.as_view()),
+    url(r'^add_stock/', views.AddStockView.as_view()),
 
     # PROFIT URLS
     url(r'^profit/', views.ShowProfitView.as_view()),
@@ -64,6 +65,7 @@ urlpatterns = [
 
     # PERSON URLS
     url(r'^add_person/', views.AddPersonView.as_view()),
+    url(r'^show_persons/', views.ShowPersonView.as_view()),
 
     # ITEMS PAGE
     url(r'^add_item/', views.LoadAddItem.as_view()),

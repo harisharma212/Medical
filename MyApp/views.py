@@ -94,12 +94,12 @@ class LogoutView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         logout(request)
+        return HttpResponseRedirect('/load/')
 
 
 class StockView(LoginRequiredMixin,View):
 
     def get(self, request, *args, **kwargs):
-        
         model = ComplteStockDetails
         objs = ComplteStockDetails.objects.all()
         for obj in objs:
@@ -109,6 +109,20 @@ class StockView(LoginRequiredMixin,View):
                                   {'data': objs,
                                    'itemnames': [
                                        obj.item_name for obj in objs]})
+
+
+class AddStockView(LoginRequiredMixin, View):
+    def get(self, request):
+        form = StockForm()
+        return render(request, 'add_stock.html', {'form': form})
+
+    def post(self, request):
+        form = StockForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/home/')
+        else:
+            return HttpResponseRedirect('/add_stock/')
 
 
 class LoadShopPage(LoginRequiredMixin, View):
@@ -157,7 +171,17 @@ class ShowDealerView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         objs = DealersInfo.objects.all()
-        return render(request, 'dealers.html', {'data': objs})
+        return render(request, 'dealers.html', {'objs': objs})
+    
+    def post(self, request, *args, **kwargs):
+        return HttpResponseRedirect('/home/')
+
+
+class ShowPersonView(LoginRequiredMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        objs = Person.objects.all()
+        return render(request, 'persons.html', {'objs': objs})
     
     def post(self, request, *args, **kwargs):
         return HttpResponseRedirect('/home/')
@@ -167,7 +191,7 @@ class ShowBillingCart(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         users = Person.objects.all()
-        dictionary = dict(request.POST.viewitems())
+        dictionary = dict(request.POST)
         test_list = []
         for key in range(len(dictionary.get('item_name_s'))):
 
@@ -206,9 +230,8 @@ class ShowBillingCart(LoginRequiredMixin, View):
         sum_of_all_elements = sum([x['tp'] for x in test_list])
         return render(request, 'show_final_billing_cart.html', {
             'test_list': test_list,
-            'sum': sum_of_all_elements, 'users': users},
-            context_instance=RequestContext(
-            request))
+            'sum': sum_of_all_elements, 'users': users}
+            )
     
     def get(self, request, *args, **kwargs):
         return HttpResponseRedirect('/load_shop_page/')
@@ -265,8 +288,8 @@ class GoFinalBillingView(LoginRequiredMixin, View):
             return render(request, 'final_billing.html',
                 {'final_list': final_list,
                 'user_details': per_obj,
-                'sum': dictionary['sum']},
-                context_instance=RequestContext(request))
+                'sum': dictionary['sum']}
+                )
         else:
             return HttpResponseRedirect('/load_shop_page/')
 
@@ -310,8 +333,6 @@ def print_page(request):
 class ShowBillingsView(LoginRequiredMixin, View):
 
     def get(self, request):
-        import pdb
-        pdb.set_trace()
         objs = Billings.objects.all().order_by('-bill_date')
         users = Person.objects.all()
         return render(request, 'billings.html',

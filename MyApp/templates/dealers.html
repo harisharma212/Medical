@@ -12,7 +12,23 @@
 						<div class="inner">
 							{% include 'header.html' %}
 							<!-- Banner -->
-							{{ form.as_ul }}
+							<h4 align="right">Click <a style="color: green;" href="/add_dealer/">HERE</a> to add Dealer</h4>
+							<table>
+								<tr>
+									<th>Name</th>
+									<th>D_Licence1</th>
+									<th>D_Licence2</th>
+									<th>Tin Number</th>
+								</tr>
+								{% for obj in objs %}
+									<tr>
+										<td>{{obj.person_info.user}}</td>
+										<td>{{obj.dl1}}</td>
+										<td>{{obj.dl2}}</td>
+										<td>{{obj.tin}}</td>
+									</tr>
+								{% endfor %}
+							</table>
 										
 						</div>
 					</div>

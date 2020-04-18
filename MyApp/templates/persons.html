@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+{% load static %}
+
+{% include 'head.html' %}
+
+<html>
+	<body>
+		<!-- Wrapper -->
+			<div id="wrapper">
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+							{% include 'header.html' %}
+							<!-- Banner -->
+							<h4 align="right">Click <a style="color: green;" href="/add_person/">HERE</a> to add Person</h4>
+							<table>
+								<tr>
+									<th>User Name</th>
+									<th>First Name</th>
+									<th>Last Name</th>
+									<th>Age</th>
+									<th>Email</th>
+									<th>Date of Birth</th>
+									<th>Phone</th>
+									<th>Address</th>
+									<th>Registered on</th>
+								</tr>
+								{% for obj in objs %}
+									<tr>
+										<td>{{obj.user}}</td>
+										<td>{{obj.first_name}}</td>
+										<td>{{obj.last_name}}</td>
+										<td>{{obj.age}}</td>
+										<td>{{obj.email_id}}</td>
+										<td>{{obj.dob}}</td>
+										<td>{{obj.phone}}</td>
+										<td>{{obj.address}}</td>
+										<td>{{obj.date_created.date}}</td>
+									</tr>
+								{% endfor %}
+							</table>
+										
+						</div>
+					</div>
+				<!-- Sidebar -->
+					{% include 'sidebar.html' %}
+			</div>
+		<!-- Scripts -->
+			{% include 'js_scripts.html' %}
+	</body>
+</html>

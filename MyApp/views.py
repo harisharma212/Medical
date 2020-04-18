@@ -282,7 +282,7 @@ class GoFinalBillingView(LoginRequiredMixin, View):
                  'user': dictionary.get('bill_user')})
 
             fp = open('billing.html', 'w')
-            fp.write(str(c))
+            fp.write(str(c.content))
             fp.close()
 
             return render(request, 'final_billing.html',
@@ -318,15 +318,13 @@ class SendInvoiceView(LoginRequiredMixin, View):
 
 
 def print_page(request):
+	# Windows
     #config = pdfkit.configuration(wkhtmltopdf='C:\Program Files\wkhtmltopdf')
     #path_wkthmltopdf = r'C:/Python27/wkhtmltopdf/bin/wkhtmltopdf.exe'
-    #config = pdfkit.configuration(wkhtmltopdf=path_wkthmltopdf)
-    import pdb
-    # pdb.set_trace()
-    path_wkthmltopdf = r'C:/wkhtmltopdf/bin/wkhtmltopdf.exe'
-    config = pdfkit.configuration(wkhtmltopdf=path_wkthmltopdf)
-    pdfkit.from_file('billing.html', 'out.pdf', configuration=config)
-    # os.system('lpr out.pdf')
+    #config = pdfkit.configuration(wkhtmltopdf=path_wkthmltopdf
+    pdfkit.from_file('billing.html', 'out.pdf')
+    os.system('lpr out.pdf')
+    os.remove('out.pdf')
     return HttpResponseRedirect('/home')
 
 
@@ -348,6 +346,7 @@ class ShowBillingsView(LoginRequiredMixin, View):
 class GenerateBillView(LoginRequiredMixin, View):
 
     def get(self, request, bill_num=None):
+        import pdb;pdb.set_trace()
         if bill_num:
             obj = Billings.objects.get(bill_number=int(bill_num))
             inv_number = obj.bill_number
@@ -355,20 +354,23 @@ class GenerateBillView(LoginRequiredMixin, View):
             user = obj.bill_user.user
             final_list = obj.bill_items
             sum1 = obj.bill_amount
-            c = render(request, 'bill_for_each_invoice.html',
+            output_file_name = '''{BASE_DIR}/Bills/{bill_num}_{user}_\
+{date}{month}\
+{year}.pdf'''.format(
+	BASE_DIR=BASE_DIR, bill_num=str(bill_num), user=user,
+	date=str(inv_date.date().day), month=str(inv_date.date().month),
+	year=str(inv_date.date().month))
+            content = render(request, 'bill_for_each_invoice.html',
                                    {'inv_number': inv_number,
                                     'inv_date': inv_date,
                                     'user': user,
                                     'final_list': final_list,
                                     'sum1': sum1})
             fp = open('test_bill_test.html', 'w')
-            fp.write(str(c))
+            content = str(content.content).replace('\n', '').replace('\t', '')
+            fp.write(content)
             fp.close()
-            pdfkit.from_file(
-                'test_bill_test.html',
-                '{BASE_DIR}/Bills/{bill_num}_{user}_{date}{month}{year}.pdf'.format(
-                    BASE_DIR=BASE_DIR, bill_num=str(inv_number), user=user, date=inv_date.date().day,
-                    month=inv_date.date().month, year=inv_date.date().year))
+            pdfkit.from_file('test_bill_test.html', output_file_name)
             os.remove('test_bill_test.html')
             return HttpResponseRedirect('/home/')
         else:

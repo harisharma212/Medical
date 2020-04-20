@@ -1,6 +1,10 @@
 asgiref==3.2.7
 Django==3.0.5
+django-postgres-copy==2.4.2
+et-xmlfile==1.0.1
+jdcal==1.4.1
 jsonfield==3.1.0
+openpyxl==3.0.3
 pdfkit==0.6.1
 psycopg2==2.8.5
 pytz==2019.3

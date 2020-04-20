@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
 from django.db import models
+from postgres_copy import CopyManager
 from jsonfield import JSONField
 
 # Create your models here.
@@ -15,6 +16,7 @@ class Person(models.Model):
 	date_created = models.DateTimeField(auto_now=True)
 	phone = models.CharField(max_length=10, unique=True)
 	address = models.CharField(max_length=200)
+	objects = CopyManager()
 
 	def __str__(self):
 		return str(self.user)
@@ -26,6 +28,7 @@ class DealersInfo(models.Model):
 	dl1 = models.CharField(max_length=15, unique=True)
 	dl2 = models.CharField(max_length=15, unique=True)
 	tin = models.CharField(max_length=15, unique=True)
+	objects = CopyManager()
 
 	def __str__(self):
 		return str(self.person_info.first_name + self.person_info.last_name)
@@ -44,6 +47,7 @@ class ComplteStockDetails(models.Model):
     margin = models.CharField(max_length=20)
     cgst = models.CharField(max_length=20)
     sgst = models.CharField(max_length=20)
+    objects = CopyManager()
 
     def __str__(self):
         return str(self.item_name)
@@ -54,6 +58,7 @@ class Billings(models.Model):
 	bill_date = models.DateTimeField(auto_now_add=True)
 	bill_user = models.ForeignKey(Person, on_delete=models.CASCADE)
 	bill_amount = models.DecimalField(max_digits=10, decimal_places=4)
+	objects = CopyManager()
 
 	def __str__(self):
 		return str(self.bill_number)

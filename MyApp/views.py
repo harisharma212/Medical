@@ -521,9 +521,15 @@ class AddDealerView(LoginRequiredMixin, View):
             return HttpResponseRedirect('/add_dealer_page/')
 
 
-class LoadAddItem(LoginRequiredMixin, View):
+class LoadDataToExcel(LoginRequiredMixin, View):
 
     def get(self, request):
+        Person.objects.to_csv(f'{BASE_DIR}/Person.csv')
+        DealersInfo.objects.to_csv(
+            f'{BASE_DIR}/Dealer.csv', 'id', 'person_info__user',
+            'company_name', 'dl1', 'dl2', 'tin')
+        ComplteStockDetails.objects.to_csv(f'{BASE_DIR}/Stock.csv')
+        
         return render(request, 'additempage.html')
 
     def post(self, request):

@@ -68,12 +68,13 @@ urlpatterns = [
     url(r'^show_persons/', views.ShowPersonView.as_view()),
 
     # ITEMS PAGE
-    url(r'^add_item/', views.LoadAddItem.as_view()),
+    url(r'^upload_to_excel/', views.LoadDataToExcel.as_view()),
+
+    # LOADING DATA URLS
+    url(r'^load_from_excel/', views.LoadDataFromExcel.as_view()),
     
     # DEALER URLS
     url(r'^add_dealer/', views.AddDealerView.as_view()),
     url(r'^show_dealers/', views.ShowDealerView.as_view()),
     
-    # LOADING DATA URLS
-    url(r'^load_excel/', views.LoadDataFromExcel.as_view()),
 ]

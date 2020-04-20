@@ -26,3 +26,12 @@ ALTER ROLE myprojectuser SET default_transaction_isolation TO 'read committed';
 ALTER ROLE myprojectuser SET timezone TO 'UTC';
 
 GRANT ALL PRIVILEGES ON DATABASE myproject TO myprojectuser;
+
+
+##################### DATA BACKUP ##############################
+# Export
+------->
+pg_dump -U myprojectuser myproject -h localhost > exported_data.sql
+# Import
+------->
+pg_dump -U myprojectuser myproject -h localhost < exported_data.sql

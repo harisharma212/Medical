@@ -12,6 +12,7 @@ from django.views.generic import View
 from django.contrib.auth import authenticate, login, logout
 from django.template import RequestContext
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Max
 from Medical.settings import BASE_DIR
 from MyApp.forms import StockForm, PersonForm, DealerForm
 from MyApp.models import ComplteStockDetails, DealersInfo, Person, Billings
@@ -103,8 +104,8 @@ class StockView(LoginRequiredMixin,View):
         model = ComplteStockDetails
         objs = ComplteStockDetails.objects.all()
         for obj in objs:
-            obj.price = obj.price_per_unit + (obj.price_per_unit * (
-                float(obj.margin) + float(obj.cgst) + float(obj.sgst)))
+            obj.price = obj.price_per_unit + float(
+                obj.margin) + float(obj.cgst) + float(obj.sgst)
         return render(request, 'show_stock.html',
                                   {'data': objs,
                                    'itemnames': [
@@ -119,8 +120,16 @@ class AddStockView(LoginRequiredMixin, View):
     def post(self, request):
         form = StockForm(request.POST)
         if form.is_valid():
-            form.save()
-            return HttpResponseRedirect('/home/')
+            try:
+                form.save()
+            except:
+                for count in range(ComplteStockDetails.objects.count()):
+                    try:
+                        form.save()
+                        break
+                    except:
+                        continue
+            return HttpResponseRedirect('/show_stock/')
         else:
             return HttpResponseRedirect('/add_stock/')
 
@@ -204,20 +213,14 @@ class ShowBillingCart(LoginRequiredMixin, View):
                     if bill_stock_obj and bill_stock_obj.quantity and (
                         int(bill_stock_obj.quantity) > int(
                             dictionary.get('req_qnt')[key])):
-                        total_price = (float(
-                            bill_stock_obj.price_per_unit) + (
-                            float(bill_stock_obj.price_per_unit) * (float(
-                                bill_stock_obj.margin) + float(
-                                bill_stock_obj.cgst) + float(
-                                bill_stock_obj.sgst)))) * \
-                            float(
-                            dictionary.get('req_qnt')[key])
+
                         total_ppu = (float(bill_stock_obj.price_per_unit) +
-                                     (float(bill_stock_obj.price_per_unit) *
                                       (float(bill_stock_obj.margin) +
                                        float(bill_stock_obj.cgst) +
-                                       float(bill_stock_obj.sgst))))
-
+                                       float(bill_stock_obj.sgst)))
+                        total_price = total_ppu * float(
+                        dictionary.get('req_qnt')[key])
+                        
                         test_list.append({'obj': bill_stock_obj,
                                           'quantity': dictionary.get(
                                               'req_qnt')[key],
@@ -270,10 +273,23 @@ class GoFinalBillingView(LoginRequiredMixin, View):
                     continue
             per_obj = Person.objects.get(
                 user=dictionary.get('bill_user')[0])
-            bill_obj = Billings(
-                bill_items=final_list, bill_user=per_obj,
-                bill_amount=float(dictionary['sum'][0]))
-            bill_obj.save()
+
+            try:
+                bill_obj = Billings(
+                    bill_items=final_list, bill_user=per_obj,
+                    bill_amount=float(dictionary['sum'][0]))
+                bill_obj.save()
+            except:
+                for count in range(Billings.objects.count()):
+                    try:
+                        bill_obj = Billings(
+                            bill_items=final_list, bill_user=per_obj,
+                            bill_amount=float(dictionary['sum'][0]))
+                        bill_obj.save()
+                        break
+                    except:
+                        continue
+
             c = render(request,
                 'billing.html',
                 {'final_list': final_list, 'sum': dictionary['sum'],
@@ -287,8 +303,11 @@ class GoFinalBillingView(LoginRequiredMixin, View):
 
             return render(request, 'final_billing.html',
                 {'final_list': final_list,
-                'user_details': per_obj,
-                'sum': dictionary['sum']}
+                 'user_details': per_obj,
+                 'sum': dictionary['sum'],
+                 'inv_number': bill_obj.bill_number,
+                 'inv_date': bill_obj.bill_date,
+                 'user': dictionary.get('bill_user')}
                 )
         else:
             return HttpResponseRedirect('/load_shop_page/')
@@ -317,17 +336,6 @@ class SendInvoiceView(LoginRequiredMixin, View):
         return HttpResponseRedirect('/home/')
 
 
-def print_page(request):
-	# Windows
-    #config = pdfkit.configuration(wkhtmltopdf='C:\Program Files\wkhtmltopdf')
-    #path_wkthmltopdf = r'C:/Python27/wkhtmltopdf/bin/wkhtmltopdf.exe'
-    #config = pdfkit.configuration(wkhtmltopdf=path_wkthmltopdf
-    pdfkit.from_file('billing.html', 'out.pdf')
-    os.system('lpr out.pdf')
-    os.remove('out.pdf')
-    return HttpResponseRedirect('/home')
-
-
 class ShowBillingsView(LoginRequiredMixin, View):
 
     def get(self, request):
@@ -346,7 +354,6 @@ class ShowBillingsView(LoginRequiredMixin, View):
 class GenerateBillView(LoginRequiredMixin, View):
 
     def get(self, request, bill_num=None):
-        import pdb;pdb.set_trace()
         if bill_num:
             obj = Billings.objects.get(bill_number=int(bill_num))
             inv_number = obj.bill_number
@@ -501,8 +508,16 @@ class AddPersonView(LoginRequiredMixin, View):
     def post(self, request):
         form = PersonForm(request.POST)
         if form.is_valid():
-            form.save()
-            return HttpResponseRedirect('/home/')
+            try:
+                form.save()
+            except:
+                for count in range(Person.objects.count()):
+                    try:
+                        form.save()
+                        break
+                    except:
+                        continue
+            return HttpResponseRedirect('/show_persons/')
         else:
             return HttpResponseRedirect('/add_person/')
 
@@ -515,20 +530,27 @@ class AddDealerView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         form = DealerForm(request.POST)
         if form.is_valid():
-            form.save()
-            return HttpResponseRedirect('/home/')
+            try:
+                form.save()
+            except:
+                for count in range(Person.objects.count()):
+                    try:
+                        form.save()
+                        break
+                    except:
+                        continue
+            return HttpResponseRedirect('/show_dealers/')
         else:
-            return HttpResponseRedirect('/add_dealer_page/')
+            return HttpResponseRedirect('/home/')
 
 
 class LoadDataToExcel(LoginRequiredMixin, View):
 
     def get(self, request):
         Person.objects.to_csv(f'{BASE_DIR}/Person.csv')
-        DealersInfo.objects.to_csv(
-            f'{BASE_DIR}/Dealer.csv', 'id', 'person_info__user',
-            'company_name', 'dl1', 'dl2', 'tin')
+        DealersInfo.objects.to_csv(f'{BASE_DIR}/Dealer.csv')
         ComplteStockDetails.objects.to_csv(f'{BASE_DIR}/Stock.csv')
+        Billings.objects.to_csv(f'{BASE_DIR}/Billings.csv')
         
         return render(request, 'additempage.html')
 
@@ -539,6 +561,10 @@ class LoadDataToExcel(LoginRequiredMixin, View):
 class LoadDataFromExcel(LoginRequiredMixin, View):
 
     def get(self, request):
+        Person.objects.from_csv(f'{BASE_DIR}/Person.csv')
+        DealersInfo.objects.from_csv(f'{BASE_DIR}/Dealer.csv')
+        ComplteStockDetails.objects.from_csv(f'{BASE_DIR}/Stock.csv')
+        Billings.objects.from_csv(f'{BASE_DIR}/Billings.csv')
         return HttpResponseRedirect('/home/')
         # TODO
         # Logic to add data from Excel file
@@ -550,6 +576,27 @@ class LoadDataFromExcel(LoginRequiredMixin, View):
         # Logic to add data from Excel file
         # And load Stock page
 
+
+def print_page(request):
+    # Windows
+    #config = pdfkit.configuration(wkhtmltopdf='C:\Program Files\wkhtmltopdf')
+    #path_wkthmltopdf = r'C:/Python27/wkhtmltopdf/bin/wkhtmltopdf.exe'
+    #config = pdfkit.configuration(wkhtmltopdf=path_wkthmltopdf
+    pdfkit.from_file('billing.html', 'out.pdf')
+    os.system('lpr out.pdf')
+    os.remove('out.pdf')
+    return HttpResponseRedirect('/home')
+"""
+class SendSMSView(LoginRequiredMixin, View):
+    def post(self, request):
+        import pdb;pdb.set_trace()
+        data = request.POST
+        message = f'''Hello {data['username']}
+Thank you for your purchase at MY STORE
+Invoice date: {data['inv_dt']}
+Invoice Number: {data['inv_num']}
+Invoice Amount: {data['amount']}'''
+        number = data['mobile_number']"""    
 ##############  Profit/Loss Code for all the bills ###################
 '''
 obj_bills = Billings.objects.all()

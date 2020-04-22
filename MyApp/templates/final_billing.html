@@ -44,11 +44,28 @@
 									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Approver Signature</h3></font>
 								<table>
 									<tr>
-										<td><form action="/send_invoice/" method="POST">
-										{% csrf_token %}
-										<input type="hidden" name="email_id" value={{user_details.email_id}}>
-										<font align='center'><input type='submit' value='Send Invoice'></font>	
-										</form></td>
+										<td>
+											<form action="/send_invoice/" method="POST">
+												{% csrf_token %}
+												<input type="hidden" name="email_id" value={{user_details.email_id}}>
+												<font align='center'>
+													<input type='submit' value='Send Invoice'>
+												</font>	
+											</form>
+										</td>
+										<!--<td>
+											<form action="/send_sms/" method="POST">
+												{% csrf_token %}
+												<input type="hidden" name="mobile_number" value="{{user_details.phone}}">
+												<input type="hidden" name="amount" value="{{sum.0}}">
+												<input type="hidden" name="inv_dt" value="{{inv_number}}">
+												<input type="hidden" name="inv_num" value="{{inv_number}}">
+												<input type="hidden" name="username" value="{{user_details.user}}">
+												<font align="center">
+													<input type="submit" value="Send SMS">
+												</font>
+											</form>
+										</td>-->
 										<td>
 											<a href='/print_page/'><input type='button' value='Print Page'></a>
 										</td>	

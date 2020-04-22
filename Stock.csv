@@ -1,0 +1,5 @@
+id,batch_num,item_name,company,price_per_unit,manf_date,exp_date,quantity,dealer_id,comments,margin,cgst,sgst
+1,4578925,Nicip 10mg,Cipla,2.55,2019-07-11,2022-07-10,76,2,For Body Pains,1.25,0.21,0.21
+3,896574,D Well,Medplox,235.62,2020-01-25,2029-02-02,15,1,For D Vitamin Defficiency,110.25,2.20,2.20
+4,4579632,Dettol Handwash 150ml,Dettol,49.02,2020-03-24,2029-02-24,148,1,For Handwash,29.36,2.20,2.20
+2,568923,Dolo 650mg,Cipla,1.25,2019-12-25,2026-12-01,506,2,Combination of Paracetamol -- Used for Fever,0.52,0.12,0.12

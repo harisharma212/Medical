@@ -1,0 +1,5 @@
+id,user,first_name,last_name,age,email_id,dob,date_created,phone,address
+1,hari,HariHara,Sarma,31,h.sarma212@gmail.com,1989-07-15,2020-04-17 05:50:57.614817+00,9533977887,Bangalore
+2,Ravi,Ravindra,Kumar,28,ravindra.kumar@gmail.com,1992-07-12,2020-04-17 05:51:50.294978+00,9533977885,Hyderabad
+3,Aruna,Aruna,Kola,33,kola.aruna89@gmail.com,1987-01-21,2020-04-22 07:13:42.758074+00,7995375968,Visakhapatnam
+4,Raj123,Raj,Kumar,26,raj.kumar@gmail.com,1987-01-21,2020-04-22 11:20:45.116925+00,7995375967,Hyderabad

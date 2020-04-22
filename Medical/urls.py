@@ -58,6 +58,7 @@ urlpatterns = [
     # COMMUNICATION URLS
     url(r'^contact/', views.ContactView.as_view()),
     url(r'^send_invoice/', views.SendInvoiceView.as_view()),
+    # url(r'send_sms/', views.SendSMSView.as_view()),
 
     # AUTHENTICATION URLS
     url(r'^login/', views.LoginView.as_view()),

@@ -1,0 +1,2 @@
+bill_number,bill_items,bill_date,bill_user_id,bill_amount
+1,"[{""batch_num"": ""568923"", ""item_name"": ""Dolo 650mg"", ""company"": ""Cipla"", ""ppu"": ""2.01"", ""quantity"": ""2"", ""tp"": ""4.02""}]",2020-04-22 11:51:42.467385+00,2,4.0200

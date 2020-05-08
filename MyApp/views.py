@@ -162,8 +162,8 @@ class SelectedStockSearchView(LoginRequiredMixin, View):
         objs = ComplteStockDetails.objects.filter(
             item_name=str(request.GET.get('itemname')))
         for obj in objs:
-            obj.price = obj.price_per_unit + (obj.price_per_unit * (
-                float(obj.margin) + float(obj.cgst) + float(obj.sgst)))
+            obj.price = obj.price_per_unit + float(
+                obj.margin) + float(obj.cgst) + float(obj.sgst)
 
         return render(
             request,
